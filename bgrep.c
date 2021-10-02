@@ -217,7 +217,7 @@ void recurse(const char *path, const unsigned char *value, const unsigned char *
 	if (!dir)
 	{
 		perror(path);
-		exit(3);
+		return;
 	}
 
 	struct dirent *d;
