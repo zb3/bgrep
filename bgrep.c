@@ -37,7 +37,9 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#define BGREP_VERSION "0.2"
+#define BGREP_VERSION "0.3"
+#define BUFSIZE 64*1024
+#define PATHMAX 16*1024
 
 // The Windows/DOS implementation of read(3) opens files in text mode by default,
 // which means that an 0x1A byte is considered the end of the file unless a non-standard
@@ -90,7 +92,7 @@ void dump_context(int fd, unsigned long long pos)
 		return; /* this one is not fatal*/
 	}
 
-	char buf[1024];
+	char buf[BUFSIZE];
 	off_t start = pos - bytes_before;
 	int bytes_to_read = bytes_before + bytes_after;
 
@@ -136,7 +138,7 @@ void searchfile(const char *filename, int fd, const unsigned char *value, const 
 	off_t offset = 0;
 
 	// use a search buffer which is at least the next power of two after len
-	size_t bufsize = 1024;
+	size_t bufsize = BUFSIZE;
 	while (bufsize <= (size_t)len)
 		bufsize <<= 1;
 	unsigned char *buf = malloc(bufsize);
@@ -217,10 +219,8 @@ void recurse(const char *path, const unsigned char *value, const unsigned char *
 	{
 		if (!(strcmp(d->d_name, ".") && strcmp(d->d_name, "..")))
 			continue;
-		char newpath[strlen(path) + strlen(d->d_name) + 1];
-		strcpy(newpath, path);
-		strcat(newpath, "/");
-		strcat(newpath, d->d_name);
+		char newpath[PATHMAX];
+		snprintf(newpath, PATHMAX, "%s/%s", path, d->d_name);
 		recurse(newpath, value, mask, len);
 	}
 
