@@ -50,7 +50,7 @@
 #define O_BINARY 0
 #endif
 
-int bytes_before = 0, bytes_after = 0;
+int bytes_before = 0, bytes_after = 0, first_match = 0;
 
 void die(const char* msg, ...);
 
@@ -178,12 +178,16 @@ void searchfile(const char *filename, int fd, const unsigned char *value, const 
 				printf("%s: 0x%llx\n", filename, pos);
 				if (bytes_before || bytes_after)
 					dump_context(fd, pos);
+
+			  if (first_match)
+			    goto post_search;
 			}
 		}
 
 		offset += r;
 
 	}
+	post_search:
 
 	free(buf);
 }
@@ -242,7 +246,7 @@ void die(const char* msg, ...)
 void usage(char** argv)
 {
 	fprintf(stderr, "bgrep version: %s\n", BGREP_VERSION);
-	fprintf(stderr, "usage: %s [-B bytes] [-A bytes] [-C bytes] <hex> [<path> [...]]\n", *argv);
+	fprintf(stderr, "usage: %s [-B bytes] [-A bytes] [-C bytes] [-1] <hex> [<path> [...]]\n", *argv);
 	exit(1);
 }
 
@@ -250,7 +254,7 @@ void parse_opts(int argc, char** argv)
 {
 	int c;
 
-	while ((c = getopt(argc, argv, "A:B:C:")) != -1)
+	while ((c = getopt(argc, argv, "A:B:C:1")) != -1)
 	{
 		switch (c)
 		{
@@ -262,6 +266,9 @@ void parse_opts(int argc, char** argv)
 				break;
 			case 'C':
 				bytes_before = bytes_after = atoi(optarg);
+				break;
+			case '1':
+				first_match = 1;
 				break;
 			default:
 				usage(argv);
