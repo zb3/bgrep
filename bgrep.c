@@ -200,6 +200,10 @@ void recurse(const char *path, const unsigned char *value, const unsigned char *
 		perror("stat");
 		return;
 	}
+
+	if (S_ISFIFO(s.st_mode) || S_ISCHR(s.st_mode) || S_ISSOCK(s.st_mode))
+	  return;
+
 	if (!S_ISDIR(s.st_mode))
 	{
 		int fd = open(path, O_RDONLY | O_BINARY);
