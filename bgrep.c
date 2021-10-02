@@ -175,7 +175,7 @@ void searchfile(const char *filename, int fd, const unsigned char *value, const 
 			if (i > len)
 			{
 				unsigned long long pos = (unsigned long long)(offset + o - len);
-				printf("%s: %08llx\n", filename, pos);
+				printf("%s: 0x%llx\n", filename, pos);
 				if (bytes_before || bytes_after)
 					dump_context(fd, pos);
 			}
