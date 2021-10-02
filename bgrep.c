@@ -179,8 +179,8 @@ void searchfile(const char *filename, int fd, const unsigned char *value, const 
 				if (bytes_before || bytes_after)
 					dump_context(fd, pos);
 
-			  if (first_match)
-			    goto post_search;
+				if (first_match)
+					goto post_search;
 			}
 		}
 
@@ -202,7 +202,7 @@ void recurse(const char *path, const unsigned char *value, const unsigned char *
 	}
 
 	if (S_ISFIFO(s.st_mode) || S_ISCHR(s.st_mode) || S_ISSOCK(s.st_mode))
-	  return;
+		return;
 
 	if (!S_ISDIR(s.st_mode))
 	{
