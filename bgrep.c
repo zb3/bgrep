@@ -38,6 +38,7 @@
 #include <getopt.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #define BGREP_VERSION "0.3"
 #define BUFSIZE 64*1024
@@ -197,7 +198,8 @@ void recurse(const char *path, const unsigned char *value, const unsigned char *
 	struct stat s;
 	if (stat(path, &s))
 	{
-		perror("stat");
+		if (errno != ENOENT)
+			perror("stat");
 		return;
 	}
 
