@@ -81,6 +81,25 @@ int ascii2hex(char c)
 		return -1;
 }
 
+ssize_t readall(int fd, char *buf, size_t count) {
+	ssize_t cur = 0, ret = -1;
+
+	while (cur<count && ret) {
+		ret = read(fd, buf+cur, count-cur);
+
+		if (ret == -1) {
+			if (errno == EINTR)
+			  continue;
+
+			return ret;
+		}
+
+		cur += ret;
+	}
+
+	return cur;
+}
+
 /* TODO: this will not work with STDIN or pipes
  * 	 we have to maintain a window of the bytes before which I am too lazy to do
  * 	 right now.
@@ -158,7 +177,7 @@ void searchfile(const char *filename, int fd, const unsigned char *value, const 
 		int r;
 
 		memmove(buf, buf + bufsize - len, len);
-		r = read(fd, buf + len, bufsize - len);
+		r = readall(fd, buf + len, bufsize - len);
 
 		if (r < 0)
 		{
